@@ -5,7 +5,10 @@ import { getRandomPrompt } from '../utils';
 import FormField from '../components/FormField';
 import Loader from '../components/Loader';
 import { addPost, createPost } from '../utils/apis';
-import axios from 'axios'
+import { downloadImage } from '../utils';
+import { download } from '../assets';
+import toast from 'react-hot-toast';
+
 const CreatePost = () => {
   const navigate = useNavigate();
 
@@ -16,6 +19,8 @@ const CreatePost = () => {
   });
 
   const [generatingImg, setGeneratingImg] = useState(false);
+    const [downloadingImg, setDownloadingImg] = useState(false);
+
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
@@ -34,7 +39,7 @@ const CreatePost = () => {
         if(response.type=='success'){
           setForm({ ...form, photo: `data:image/jpeg;base64,${response.photo}` });
         }else{
-          alert(response.message)
+          toast.error(response.message)
         }
       } catch (err) {
         console.log(err)
@@ -42,9 +47,30 @@ const CreatePost = () => {
         setGeneratingImg(false);
       }
     } else {
-      alert('Please provide proper prompt');
+      toast.error('Please provide proper prompt');
     }
   };
+
+const handleDownload =async ()=>{
+  if (form.photo !='') {
+    setDownloadingImg(true);
+    try {
+      const response=await addPost(form)
+      if(response.type=='success'){
+        downloadImage(response.data._id, response.data.photo)       
+      }else{
+        toast.error(response.message)
+      }
+      
+    } catch (err) {
+      toast.error(err);
+    } finally {
+      setDownloadingImg(false);
+    }
+  } else {
+    toast.error('Please download ate an image with proper details');
+  }
+}
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -54,19 +80,19 @@ const CreatePost = () => {
       try {
         const response=await addPost(form)
         if(response.type=='success'){
-          alert('Success');
+          toast.success('Success');
           navigate('/');
         }else{
-          alert(response.message)
+          toast.error(response.message)
         }
         
       } catch (err) {
-        alert(err);
+        toast.error(err);
       } finally {
         setLoading(false);
       }
     } else {
-      alert('Please generate an image with proper details');
+      toast.error('Please share an image with proper details');
     }
   };
 
@@ -130,6 +156,23 @@ const CreatePost = () => {
           >
             {generatingImg ? 'Generating...' : 'Generate'}
           </button>
+          {form.photo !== '' && (
+  <button
+    type="button"
+    onClick={handleDownload}
+    className="flex gap-3 text-white bg-green-700 font-medium rounded-md text-lg w-full sm:w-auto px-5 py-2.5 text-center relative"
+  >
+    {downloadingImg ? (
+         <span className="mr-2">Downloading...</span>
+    ) : (
+      <>
+        <span className="mr-2">Download</span>
+        <img src={download} alt="download" className="w-6 h-6 object-contain invert" />
+      </>
+    )}
+  </button>
+)}
+
         </div>
 
         <div className="mt-10">

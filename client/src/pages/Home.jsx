@@ -3,6 +3,7 @@ import Loader from '../components/Loader'
 import Card from '../components/Card'
 import FormField from './../components/FormField';
 import { fetchPost } from '../utils/apis';
+import toast from 'react-hot-toast';
 
 const RenderCards = ({ data, title }) => {
   if (data?.length > 0) {
@@ -35,18 +36,29 @@ const Home = () => {
         setAllPosts(response.data.reverse());
       }      
     } catch (err) {
-      alert(err);
+      toast.error(err);
     } finally {
       setLoading(false);
     }
   };
-console.log(allPosts)
   useEffect(() => {
     fetchPosts();
   }, []);
 
   const handleSearchChange = (e) => {
-    e.preventDefault()
+    clearTimeout(searchTimeout)
+    setSearchText(e.target.value);
+    setSearchTimeout(
+      setTimeout(()=>{
+        const searchResults=allPosts.filter((item)=> 
+          item.name.toLowerCase().includes(searchText.toLowerCase()) ||
+          item.prompt.toLowerCase().includes(searchText.toLowerCase())
+        
+        );
+        setSearchedResults(searchResults)
+      },500)
+    )
+    
   };
 
   return (
