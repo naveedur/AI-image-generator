@@ -2,7 +2,7 @@ import axios from 'axios'
 
 
 export const fetchPost=async()=>{
-   const {data}=await axios.get('https://ai-image-generator-nu.vercel.app/api/v1/post')
+   const {data}=await axios.get('post')
    return data 
     
 }

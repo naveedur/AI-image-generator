@@ -30,8 +30,8 @@ const Home = () => {
     try {
 
       let response=await fetchPost()
-       console.log(response)
-      if (response.type==true) {
+       
+      if (response.type=="success") {
         setAllPosts(response.data.reverse());
       }      
     } catch (err) {
