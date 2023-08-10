@@ -152,7 +152,7 @@ const handleDownload =async ()=>{
           <button
             type="button"
             onClick={generateImage}
-            className=" text-white bg-green-700 font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+            className=" text-white bg-[rgba(49,120,116,0.8)] font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center"
           >
             {generatingImg ? 'Generating...' : 'Generate'}
           </button>
@@ -160,7 +160,7 @@ const handleDownload =async ()=>{
   <button
     type="button"
     onClick={handleDownload}
-    className="flex gap-3 text-white bg-green-700 font-medium rounded-md text-lg w-full sm:w-auto px-5 py-2.5 text-center relative"
+    className="flex gap-3 text-white bg-[rgba(49,120,116,0.8)] font-medium rounded-md text-lg w-full sm:w-auto px-5 py-2.5 text-center relative"
   >
     {downloadingImg ? (
          <span className="mr-2">Downloading...</span>
