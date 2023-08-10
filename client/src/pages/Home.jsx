@@ -2,6 +2,7 @@ import {useState,useEffect} from 'react'
 import Loader from '../components/Loader'
 import Card from '../components/Card'
 import FormField from './../components/FormField';
+import { fetchPost } from '../utils/apis';
 
 const RenderCards = ({ data, title }) => {
   if (data?.length > 0) {
@@ -27,24 +28,19 @@ const Home = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8080/api/v1/post', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
 
-      if (response.ok) {
-        const result = await response.json();
-        setAllPosts(result.data.reverse());
-      }
+      let response=await fetchPost()
+       console.log(response)
+      if (response.type==true) {
+        setAllPosts(response.data.reverse());
+      }      
     } catch (err) {
       alert(err);
     } finally {
       setLoading(false);
     }
   };
-
+console.log(allPosts)
   useEffect(() => {
     fetchPosts();
   }, []);

@@ -1,9 +1,11 @@
-import { useNavigate } from 'react-router-dom';
+import { createPath, useNavigate } from 'react-router-dom';
 import {useState} from 'react'
 import { preview } from '../assets';
 import { getRandomPrompt } from '../utils';
 import FormField from '../components/FormField';
 import Loader from '../components/Loader';
+import { addPost, createPost } from '../utils/apis';
+import axios from 'axios'
 const CreatePost = () => {
   const navigate = useNavigate();
 
@@ -27,18 +29,13 @@ const CreatePost = () => {
     if (form.prompt) {
       try {
         setGeneratingImg(true);
-        const response = await fetch('http://localhost:8080/api/v1/dalle', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            prompt: form.prompt,
-          }),
-        });
-
-        const data = await response.json();
-        setForm({ ...form, photo: `data:image/jpeg;base64,${data.photo}` });
+        
+        const response=await createPost({prompt:form.prompt})
+        if(response.type=='success'){
+          setForm({ ...form, photo: `data:image/jpeg;base64,${response.photo}` });
+        }else{
+          alert(response.message)
+        }
       } catch (err) {
         console.log(err)
       } finally {
@@ -55,17 +52,14 @@ const CreatePost = () => {
     if (form.prompt && form.photo) {
       setLoading(true);
       try {
-        const response = await fetch('http://localhost:8080/api/v1/post', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ ...form }),
-        });
-
-        await response.json();
-        alert('Success');
-        navigate('/');
+        const response=await addPost(form)
+        if(response.type=='success'){
+          alert('Success');
+          navigate('/');
+        }else{
+          alert(response.message)
+        }
+        
       } catch (err) {
         alert(err);
       } finally {
